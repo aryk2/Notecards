@@ -6,6 +6,21 @@
 #include <dirent.h>
 using namespace std;
 
+class node;
+class note_set {
+    public:
+        note_set();
+        ~note_set();
+        int add_set();
+        int view_notefolder();
+        int clear_lll(node * & head);
+        void append_lll(node * & head, char * entry);       
+    private:
+    node * main_list;
+    node * more_study;
+    node * studied;
+};
+
 class node {
     public:
         node();
@@ -14,25 +29,3 @@ class node {
         char * definition;
         node * next;
 };
-
-node::node() {
-    term = NULL;
-    definition = NULL;
-    next = NULL;
-}
-
-node::~node() {
-    if(term) {
-        delete [] term;
-        term = NULL;
-    }
-    if(definition) {
-        delete [] definition;
-        definition = NULL;
-    }
-    next = NULL;
-}
-//prototypes
-int add_set();
-int view_notefolder();
-void add_to_lll_end(node * & head, char * entry);
