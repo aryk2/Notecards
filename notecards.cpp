@@ -1,6 +1,5 @@
 #include "notecards.h"
 
-
 int main() {
     int choice = 1;
     while(choice) {
@@ -15,7 +14,8 @@ int main() {
         if(choice == 1)
             notes.add_set();
         if(choice == 2)
-            notes.view_notefolder();
+            char * path = notes.view_notefolder();
+            notes.load_set(path);
     }
     return 0;
 }
@@ -24,8 +24,8 @@ int note_set::add_set() {
     return 1;
 }
 
-int note_set::view_notefolder() {
-    node * head;
+char * note_set::view_notefolder() {
+    node * head = NULL;
     DIR * Dir;
     struct dirent * DirEntry;
     Dir = opendir("notefolder");
@@ -37,8 +37,27 @@ int note_set::view_notefolder() {
             append_lll(head, DirEntry->d_name);
         }
     }
-    
-    cout << "\nwhich set would you like to open:\n";
+    int done = 0;
+    while(!done) { 
+        cout << "\nwhich set would you like to open:\n";
+        cin.ignore(100, '\n');
+        char * set = new char[200];
+        cin.get(set, 200);
+        cin.ignore(200, '\n');
+        if(strcmp(set, head -> term) == 0)
+           return set;
+        else {
+            cout << "\nfile name not found"
+                 << "\nto enter another, enter 1"
+                 << "\nif there is no set you would like, enter 0\n";
+             cin >> done;
+        }
+    }
+    return NULL;
+}
+
+int note_set::load_set(char * path) {
+
 }
 
 void note_set::append_lll(node * & head, char * entry) {
@@ -46,9 +65,13 @@ void note_set::append_lll(node * & head, char * entry) {
     node * new_node = new node;
     new_node -> term = new char [strlen(entry) +1];
     strcpy(new_node -> term, entry);
-    while(temp -> next) 
-        temp = temp -> next;
-    temp -> next = new_node; 
+    if(temp) {
+        while(temp -> next) 
+            temp = temp -> next;
+        temp -> next = new_node; 
+    }
+    else
+	head = new_node;
 }
 
 int note_set::clear_lll(node * & head) {
