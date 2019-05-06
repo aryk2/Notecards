@@ -2,6 +2,7 @@
 
 int main() {
     int choice = 1;
+    char * path;
     while(choice) {
         cout << "\nNotecard Program options:\n"
              << "1. add a new set\n"
@@ -14,7 +15,7 @@ int main() {
         if(choice == 1)
             notes.add_set();
         if(choice == 2)
-            char * path = notes.view_notefolder();
+            path = notes.view_notefolder();
             notes.load_set(path);
     }
     return 0;
@@ -57,7 +58,16 @@ char * note_set::view_notefolder() {
 }
 
 int note_set::load_set(char * path) {
-
+    char file_path[200] = {"notefolder"};
+    strcat(file_path, path);
+    ifstream myfile;
+    myfile.open(file_path);
+    string line;
+    if(myfile.is_open()) {
+        while( getline (myfile, line) )
+            cout << line << '\n';
+        myfile.close();
+    }
 }
 
 void note_set::append_lll(node * & head, char * entry) {

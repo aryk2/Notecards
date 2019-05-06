@@ -13,7 +13,7 @@ class note_set {
         ~note_set();
         int add_set();
         char * view_notefolder();
-        int load_set();
+        int load_set(char * path);
         int clear_lll(node * & head);
         void append_lll(node * & head, char * entry);       
     private:
