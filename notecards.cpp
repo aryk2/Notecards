@@ -16,9 +16,11 @@ int main() {
 	    break;
         if(choice == 1)
             notes.add_set();
-        if(choice == 2)
+        if(choice == 2) {
             path = notes.view_notefolder();
             notes.load_set(path);
+            notes.start_quiz(path, notes.get_main_list());
+        }
     }
     return 0;
 }
@@ -109,10 +111,77 @@ int note_set::load_set(char * path) {
     string line;
     if(myfile.is_open()) {
         int i = 0;
-        while( getline (myfile, line) )
-
+    	char * term;
+        char * define;
+        while( getline (myfile, line) ) {
+            if(i % 2 == 0) {
+                term = new char [line.length() +1];
+                strcpy(term, line.c_str());
+            }
+            else{ 
+                define = new char [line.length() +1];
+                strcpy(define, line.c_str());
+                append_lll(this->main_list, term, define);
+                delete [] term;
+                term = NULL;
+                delete [] define;
+                define = NULL;
+            }
+            ++i;
+        }     
         myfile.close();
     }
+}
+
+int note_set::start_quiz(char * path, node * head) {
+    cout << "you are now being quized on the ";
+    int len = strlen(path);
+    for(int i = 0; i < len; ++i) 
+        cout << path[i];
+    cout << " note card set\n"
+         << "you will be given a term, you can choose to view the definition\n"
+         << "you can choose to move each card to a set to study more or a \n"
+         << "set for cards that you feel have been studied enough for this quiz\n";
+    char ready;
+    cin >> ready;
+    cin.ignore(100, '\n');
+    node * temp = head;
+    while(head) {
+        for(int i = 0; i < 70; ++i)
+	    cout << endl;
+        cout << "press r to reveal definition\n\n"
+             << "term: " << temp -> term << endl;
+        char result;
+        cin >> result;
+        cin.ignore(100, '\n');
+        if(result == 'r')
+	    cout << "definition: " << temp -> definition << endl;
+        cout << "\npress a to add to study this card later\n"
+             << "press b if you feel good about this card and don't need more study\n"
+             << "press r to reveal definintion\n";
+        cin.ignore(100, '\n');
+        cin >> result;
+        cin.ignore(100, '\n');
+        if(result == 'a')
+	    append_lll(this -> more_study, temp -> term, temp -> definition);
+        if(result == 'b')
+            append_lll(this -> studied, temp -> term, temp -> definition);
+        if(result == 'r')
+	    cout << "definition: " << temp -> definition << endl;
+        cout << "\n\npress enter for next term";
+        cin.ignore(100, '\n');
+        cin >> ready;
+        temp = temp -> next;
+    }
+    if(more_study) {
+	cout << "\nready to view the cards marked for later study (y/n)? ";
+        char choice;
+        cin >> choice;
+        if(choice == 'y')
+	    start_quiz(path, more_study);
+    }
+    delete [] path;
+    return 0;
 }
 
 void note_set::append_lll(node * & head, char * term, char * define) {
@@ -131,6 +200,17 @@ void note_set::append_lll(node * & head, char * term, char * define) {
     }
     else
 	head = new_node;
+}
+
+void note_set::test_disp(node * head) {
+    if(!head)
+	return;
+    if(head -> term)
+        cout << head -> term << endl;
+    if(head -> definition)
+	cout << head -> definition << endl;
+    cout << endl;   
+    test_disp(head -> next);
 }
 
 int note_set::clear_lll(node * & head) {
