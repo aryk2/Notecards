@@ -142,11 +142,10 @@ int note_set::start_quiz(char * path, node * head) {
          << "you will be given a term, you can choose to view the definition\n"
          << "you can choose to move each card to a set to study more or a \n"
          << "set for cards that you feel have been studied enough for this quiz\n";
-    char ready;
-    cin >> ready;
-    cin.ignore(100, '\n');
+    getchar();
     node * temp = head;
-    while(head) {
+    node * further_study = NULL;
+    while(temp) {
         for(int i = 0; i < 70; ++i)
 	    cout << endl;
         cout << "press r to reveal definition\n\n"
@@ -159,27 +158,29 @@ int note_set::start_quiz(char * path, node * head) {
         cout << "\npress a to add to study this card later\n"
              << "press b if you feel good about this card and don't need more study\n"
              << "press r to reveal definintion\n";
-        cin.ignore(100, '\n');
         cin >> result;
         cin.ignore(100, '\n');
         if(result == 'a')
-	    append_lll(this -> more_study, temp -> term, temp -> definition);
+	    append_lll(further_study, temp -> term, temp -> definition);
         if(result == 'b')
             append_lll(this -> studied, temp -> term, temp -> definition);
         if(result == 'r')
 	    cout << "definition: " << temp -> definition << endl;
         cout << "\n\npress enter for next term";
-        cin.ignore(100, '\n');
-        cin >> ready;
+        getchar();
         temp = temp -> next;
     }
-    if(more_study) {
+    clear_lll(this -> more_study);
+    this -> more_study = further_study;
+    if(this -> more_study) {
 	cout << "\nready to view the cards marked for later study (y/n)? ";
         char choice;
         cin >> choice;
         if(choice == 'y')
 	    start_quiz(path, more_study);
     }
+    else
+	cout << "no more note cards marked for more study, exiting\n";
     delete [] path;
     return 0;
 }

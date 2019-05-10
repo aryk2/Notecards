@@ -12,10 +12,10 @@ when a text file is chosen. the user can then view the note cards and quiz thems
 the quiz is now very simple. The user can go through the terms in order and choose 
 if they want to see the definition of the term. The user is given the option to add 
 a card to a study more list. this part of the program is still in progress. 
+at this point, the quiz function continues till the user indicates they are done or 
+there are no more terms in the further study list
 
 further things I want to add:
-fix the choice making entry for the quiz function
-    -this is super weird at the moment, sometime accepts input, sometimes doesnt. 
 get the more study list working
 randomize order of cards
 add a real quiz, multiple choice or something similar, short answer entry
