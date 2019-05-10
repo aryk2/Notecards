@@ -15,7 +15,7 @@ class note_set {
         char * view_notefolder();
         int load_set(char * path);
         int clear_lll(node * & head);
-        void append_lll(node * & head, char * entry);       
+        void append_lll(node * & head, char * term, char * define);       
     private:
     node * main_list;
     node * more_study;

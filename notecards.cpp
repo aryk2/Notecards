@@ -12,6 +12,8 @@ int main() {
     
         cin >> choice; 
         note_set notes;
+        if(!choice)
+	    break;
         if(choice == 1)
             notes.add_set();
         if(choice == 2)
@@ -22,6 +24,43 @@ int main() {
 }
 
 int note_set::add_set() {
+    char * set_name = new char[200];
+    char file_path[200] = {"notefolder/"};
+    char file_ext[10] = {".txt"};
+    cout << "\nenter a new set\n"
+         << "please use no spaces and no .txt\n"
+         << "set name: ";
+    cin.ignore(100, '\n');
+    cin.get(set_name, 200, '\n');
+    cin.ignore(200, '\n');
+    strcat(file_path, set_name);
+    strcat(file_path, file_ext);
+    ofstream file;
+    file.open (file_path);
+    char another = 'y';
+    while(another == 'y') {
+        char term[500];
+        char define[1000];
+        cout << "\nenter term: ";
+        cin.get(term, 500, '\n');
+        cin.ignore(500, '\n');
+        cout << "\ndefine the term: ";
+        cin.get(define, 1000, '\n');
+        cin.ignore(1000, '\n');
+        for(int i = 0; i < strlen(term); ++i)
+	    file << term[i];
+        file << "\n";
+        for(int i = 0; i < strlen(define); ++i)
+            file << define[i];
+        file << "\n";
+        
+        cout << "add another? (y/n): ";
+        cin >> another;
+        cin.ignore(10, '\n');
+        if(another == 'n')
+ 	    break;
+    }
+    file.close();
     return 1;
 }
 
@@ -35,7 +74,7 @@ char * note_set::view_notefolder() {
     while(DirEntry = readdir(Dir)) {
         if(DirEntry->d_name[0] != '.') {
 	    cout << DirEntry->d_name << endl;
-            append_lll(head, DirEntry->d_name);
+            append_lll(head, DirEntry->d_name, NULL);
         }
     }
     int done = 0;
@@ -45,36 +84,46 @@ char * note_set::view_notefolder() {
         char * set = new char[200];
         cin.get(set, 200);
         cin.ignore(200, '\n');
-        if(strcmp(set, head -> term) == 0)
-           return set;
-        else {
-            cout << "\nfile name not found"
-                 << "\nto enter another, enter 1"
-                 << "\nif there is no set you would like, enter 0\n";
-             cin >> done;
+        node * temp = head;
+        while(temp) {
+            if(strcmp(set, temp -> term) == 0) {
+                clear_lll(head);
+                return set;
+            }
+            else
+		temp = temp -> next;
         }
+        cout << "\nfile name not found"
+             << "\nto enter another, enter 1"
+             << "\nif there is no set you would like, enter 0\n";
+        cin >> done;
     }
     return NULL;
 }
 
 int note_set::load_set(char * path) {
-    char file_path[200] = {"notefolder"};
+    char file_path[200] = {"notefolder/"};
     strcat(file_path, path);
     ifstream myfile;
     myfile.open(file_path);
     string line;
     if(myfile.is_open()) {
+        int i = 0;
         while( getline (myfile, line) )
-            cout << line << '\n';
+
         myfile.close();
     }
 }
 
-void note_set::append_lll(node * & head, char * entry) {
+void note_set::append_lll(node * & head, char * term, char * define) {
     node * temp = head;
     node * new_node = new node;
-    new_node -> term = new char [strlen(entry) +1];
-    strcpy(new_node -> term, entry);
+    new_node -> term = new char [strlen(term) +1];
+    strcpy(new_node -> term, term);
+    if(define) {
+        new_node -> definition  = new char [strlen(define) +1];
+        strcpy(new_node -> definition, define);
+    }
     if(temp) {
         while(temp -> next) 
             temp = temp -> next;
@@ -91,18 +140,6 @@ int note_set::clear_lll(node * & head) {
     delete head;
     return 0;
 } 
-//example
-/*
-    ifstream myfile;
-    string line;
-    myfile.open ("notefolder/notes.txt");
-    if(myfile.is_open()) {
-        while( getline (myfile, line) ) 
-            cout << line << '\n';
-        myfile.close();
-    }
-    */
-
 
 note_set::note_set() {
     main_list = NULL;
